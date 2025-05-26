@@ -14,32 +14,8 @@ public class TodoRestController {
     @Autowired
     private TodoItemRepository repository;
     @Autowired
-    private UserRepository userRepository;
-    @Autowired
     JwtHelper jwtHelper;
 
-//    @GetMapping("/all")
-//    public @ResponseBody Iterable<TodoItem> getAll() {
-//        Iterable<TodoItem> todoList = repository.findAll();
-//        return repository.findAll();
-//    }
-
-//    @PostMapping("/add")
-//    public @ResponseBody Result addItem(@RequestParam String name, @RequestParam String category) {
-//        TodoItem item = new TodoItem(category, name);
-//        TodoItem saved = repository.save(item);
-//        return new Result("Added", saved);
-//    }
-
-//    @PostMapping("/update")
-//    public @ResponseBody Result updateItem(@RequestParam long id, @RequestParam String name,
-//                                           @RequestParam String category, @RequestParam boolean isComplete) {
-//        TodoItem item = new TodoItem(category, name);
-//        item.setId(id);
-//        item.setComplete(isComplete);
-//        TodoItem saved = repository.save(item);
-//        return new Result("Updated", saved);
-//    }
 
     @GetMapping("/all")
     public @ResponseBody Iterable<TodoItem> getAllByUser(@RequestHeader("Authorization") String authorizationHeader) {
@@ -68,9 +44,11 @@ public class TodoRestController {
         }
         else {
             // 1. 根据用户ID查找用户
-            User user = userRepository.findById(uid)
-                    .orElseThrow(() -> new RuntimeException("User not found"));
+//            User user = userRepository.findById(uid)
+//                    .orElseThrow(() -> new RuntimeException("User not found"));
 
+            User user = new User();
+            user.setId(uid);
             // 2. 创建 TodoItem 并关联用户
             String name = request.getName();
             String category = request.getCategory();
@@ -110,8 +88,8 @@ public class TodoRestController {
         else {
             //否则进行两部判断
             // 2. 根据用户ID查找用户（确保用户存在）
-            User user = userRepository.findById(uid)
-                    .orElseThrow(() -> new RuntimeException("User not found"));
+//            User user = userRepository.findById(uid)
+//                    .orElseThrow(() -> new RuntimeException("User not found"));
 
             // 3. 检查用户是否有权修改该 TodoItem（关键步骤）
             if (!existingItem.getUser().getId().equals(uid)) {

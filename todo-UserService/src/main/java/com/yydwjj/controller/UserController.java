@@ -44,7 +44,7 @@ public class UserController {
         }
 
         // 3. 生成 Token
-        String token = jwtHelper.createToken(user.getId());
+        String token = jwtHelper.createToken(user.getId(),user.getRole());
 
         // 4. 返回标准 JSON 格式
         return ResponseEntity.ok(Map.of("token", token));
@@ -66,10 +66,11 @@ public class UserController {
         User user = new User();
         user.setName(username);
         user.setPassword(password); // 注意：生产环境应加密密码！
+        user.setRole("user");
         User savedUser = userRepository.save(user);
 
         // 3. 生成 JWT Token
-        String token = jwtHelper.createToken(savedUser.getId());
+        String token = jwtHelper.createToken(savedUser.getId(),savedUser.getRole());
 
         // 4. 返回成功信息和 Token
         return ResponseEntity.ok()
