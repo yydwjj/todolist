@@ -17,11 +17,11 @@
     </modules>
     <dependencies>
         <!--    原有依赖    -->
-        <!--    SpringWeb 全部都要用    -->
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
-        </dependency>
+        <!--    SpringWeb 网关不用    -->
+<!--        <dependency>-->
+<!--            <groupId>org.springframework.boot</groupId>-->
+<!--            <artifactId>spring-boot-starter-web</artifactId>-->
+<!--        </dependency>-->
         <!--    全都要用    -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -74,6 +74,12 @@
                 <artifactId>h2</artifactId>
                 <version>1.4.200</version>
                 <scope>test</scope>
+            </dependency>
+            <!--      SpringWeb      -->
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-web</artifactId>
+                <version>2.7.6</version>
             </dependency>
             <!--   模板页     -->
             <dependency>
