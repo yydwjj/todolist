@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>待办事项列表</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .todo-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        .todo-table th, .todo-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        .todo-table th {
+            background-color: #f2f2f2;
+        }
+        .todo-table tr.completed {
+            background-color: #e8f5e9;
+        }
+        .todo-table tr.pending {
+            background-color: #fff3e0;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input[type="text"], input[type="checkbox"] {
+            padding: 8px;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .divider {
+            height: 1px;
+            background-color: #ddd;
+            margin: 20px 0;
+        }
+    </style>
+</head>
+<body>
+<div id="loading" class="hidden">正在验证登录状态...</div>
+
+<div class="container">
+    <h1>待办事项列表</h1>
+
+    <div class="todo-list">
+        <form id="updateForm">
+            <table class="todo-table" id="todoItems">
+                <thead>
+                <tr>
+                    <th>名称</th>
+                    <th>类别</th>
+                    <th>完成</th>
+                </tr>
+                </thead>
+                <tbody id="todoItemsBody">
+                <!-- 动态生成 -->
+                </tbody>
+            </table>
+            <button type="submit">批量更新任务</button>
+        </form>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="todo-form">
+        <form id="addForm">
+            <div class="form-group">
+                <label for="inputItemName">任务名称</label>
+                <input type="text" id="inputItemName" placeholder="输入名称" required>
+            </div>
+            <div class="form-group">
+                <label for="inputItemCategory">任务类别</label>
+                <input type="text" id="inputItemCategory" placeholder="输入类别" required>
+            </div>
+            <button type="submit">添加任务</button>
+        </form>
+    </div>
+
+    <div style="text-align: right; margin-bottom: 20px;">
+        <button id="logoutBtn" style="width: auto; padding: 5px 10px;">登出</button>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script>
+        document.addEventListener('DOMContentLoaded', async () => {
+            const isAuthenticated = await checkLoginStatus();
+            if (!isAuthenticated) {
+                window.location.href = '/';
+            }
+
+            await renderTodos();
+        });
+
+        async function checkLoginStatus() {
+            const token = localStorage.getItem('token');
+            if (!token) return false;
+
+            try {
+                const response = await axios.get('/user/check-login', {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+
+                return response.data.status;
+            } catch (error) {
+                return false;
+            }
+        }
+
+        // 登出功能
+        document.getElementById('logoutBtn').addEventListener('click', () => {
+            localStorage.removeItem('token');
+            window.location.href = 'login.html';
+        });
+
+        let todos = [];
+
+        // 渲染待办事项列表
+        async function renderTodos() {
+            try {
+                const token = localStorage.getItem('token');
+                const response = await axios.get('/todo/all', {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+
+                todos = response.data;
+
+                const tbody = document.getElementById('todoItemsBody');
+                tbody.innerHTML = '';
+
+                todos.forEach(todo => {
+                    const tr = document.createElement('tr');
+                    tr.className = todo.complete ? 'completed' : 'pending';
+
+                    tr.innerHTML = `
+                        <td>
+                            <input type="text"
+                                   class="name-input"
+                                   value="${todo.name}"
+                                   data-id="${todo.id}">
+                        </td>
+                        <td>
+                            <input type="text"
+                                   class="category-input"
+                                   value="${todo.category}"
+                                   data-id="${todo.id}">
+                        </td>
+                        <td>
+                            <input type="checkbox"
+                                   ${todo.complete ? 'checked' : ''}
+                                   data-id="${todo.id}"
+                                   class="complete-checkbox">
+                        </td>
+                    `;
+                    tbody.appendChild(tr);
+                });
+            } catch (error) {
+                console.error('获取待办事项失败:', error);
+            }
+        }
+
+        // 添加新任务
+        document.getElementById('addForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const name = document.getElementById('inputItemName').value;
+            const category = document.getElementById('inputItemCategory').value;
+
+            try {
+                const token = localStorage.getItem('token');
+                const response = await axios.post('/todo/add', {
+                    name: name,
+                    category: category
+                }, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+
+                todos.push(response.data.item);
+                await renderTodos();
+                e.target.reset();
+                alert('任务已添加');
+            } catch (error) {
+                console.error('添加失败:', error);
+                alert('添加失败，请检查输入');
+            }
+        });
+
+        // 更新任务
+        document.getElementById('updateForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const updatedTodos = [];
+
+            // 收集所有需要更新的任务数据
+            document.querySelectorAll('#todoItemsBody input').forEach(input => {
+                const id = input.dataset.id;
+                const todo = todos.find(t => t.id === parseInt(id));
+
+                if (todo) {
+                    const nameInput = input.closest('tr').querySelector('.name-input');
+                    const categoryInput = input.closest('tr').querySelector('.category-input');
+                    const checkbox = input.closest('tr').querySelector('.complete-checkbox');
+
+                    updatedTodos.push({
+                        id: parseInt(id),
+                        name: nameInput.value,
+                        category: categoryInput.value,
+                        complete: checkbox.checked
+                    });
+                }
+            });
+
+            // 逐个发送更新请求
+            for (const todo of updatedTodos) {
+                try {
+                    const response = await axios.post('/todo/update', {
+                        id: todo.id,
+                        name: todo.name,
+                        category: todo.category,
+                        complete: todo.complete
+                    }, {
+                        headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+                    });
+
+                    const index = todos.findIndex(t => t.id === todo.id);
+                    if (index !== -1) {
+                        todos[index] = response.data.item;
+                    }
+                } catch (error) {
+                    console.error('更新失败:', error);
+                }
+            }
+
+            await renderTodos();
+            alert('任务已更新');
+        });
+    </script>
+    </body>
+</html>
