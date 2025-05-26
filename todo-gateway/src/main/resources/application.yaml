@@ -7,3 +7,18 @@ spring:
     nacos:
       discovery:
         server-addr: localhost:8848
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+      routes:
+        - id: PageService
+          uri: lb://PageService
+          predicates:
+            - Path=/app/**
+logging:
+  level:
+    org.springframework.cloud.gateway: trace
+    org.springframework.cloud.loadbalancer: INFO
+    com.alibaba.nacos: INFO
