@@ -114,7 +114,7 @@
         </form>
     </div>
 
-    <div style="text-align: right; margin-bottom: 20px;">
+    <div id="button-list" style="text-align: right; margin-bottom: 20px;">
         <button id="logoutBtn" style="width: auto; padding: 5px 10px;">登出</button>
     </div>
 </div>
@@ -127,6 +127,21 @@
                 window.location.href = '/';
             }
 
+            if(await checkRole()=="admin"){
+                const buttonList = document.getElementById("button-list");
+
+                // 创建新按钮
+                const newButton = document.createElement("button");
+                newButton.textContent = "管理面板"; // 按钮文字可以根据需要修改
+                newButton.style.width = "auto";
+                newButton.style.padding = "5px 10px";
+                newButton.onclick = function () {
+                    window.location.href = "manage"; // 占位 URL，后续替换成真实地址
+                };
+
+                // 将新按钮插入到 button-list 中
+                buttonList.appendChild(newButton);
+            }
             await renderTodos();
         });
 
@@ -271,7 +286,22 @@
 
             await renderTodos();
             alert('任务已更新');
-        });
+        })
+
+        async function checkRole() {
+            const token = localStorage.getItem('token');
+            if (!token) return false;
+
+            try {
+                const response = await axios.get('/user/check-role', {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+
+                return response.data.Role;
+            } catch (error) {
+                return false;
+            }
+        }
     </script>
     </body>
 </html>

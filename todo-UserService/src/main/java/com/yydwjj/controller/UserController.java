@@ -119,4 +119,45 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
         }
     }
+    /**
+     * 用户登录状态的api
+     * 登录成功返回 用户id
+     * */
+    @GetMapping("/check-role")
+    public ResponseEntity<Map<String, Object>> checkRole(
+            @RequestHeader("Authorization") String authorizationHeader
+    ) {
+        // 1. 提取 Token
+        if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("error", "Invalid token format");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+        }
+
+        String token = authorizationHeader.substring(7); // 去掉 "Bearer " 前缀
+
+        // 2. 验证 Token 是否过期
+        if (jwtHelper.isExpiration(token)) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("status", false);
+            response.put("message", "Token expired");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+        }
+        System.out.println("Server Current Time: " + new Date());
+
+        // 3. 解析 Token 获取用户 Role
+        try {
+            String role = jwtHelper.getUserRole(token);
+            Map<String, Object> response = new HashMap<>();
+            response.put("status", true);
+            response.put("message", "User is logged in");
+            response.put("Role", role);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("status", false);
+            response.put("message", "Invalid token");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(response);
+        }
+    }
 }

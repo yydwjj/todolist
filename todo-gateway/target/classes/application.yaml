@@ -16,11 +16,11 @@ spring:
         - id: UserService
           uri: lb://UserService
           predicates:
-            - Path=/user/**
+            - Path=/user/**,/admin/**
         - id: PageService
           uri: lb://PageService
           predicates:
-            - Path=/,/todolist
+            - Path=/,/todolist,/manage
         - id: TodoService
           uri: lb://ListService
           predicates:

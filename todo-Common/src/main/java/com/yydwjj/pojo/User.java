@@ -17,6 +17,7 @@ public class User {
     private String name;
     private String password;
     private String role;
+    private boolean isDeleted;
     @JsonManagedReference // 标记为主方向，避免反向序列化
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TodoItem> todoItems;

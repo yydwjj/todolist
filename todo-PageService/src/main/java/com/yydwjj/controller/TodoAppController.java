@@ -18,6 +18,9 @@ public class TodoAppController {
 		return "todolist";
 	}
 
+	@GetMapping("/manage")
+	public String manage() { return "manage";}
+
 //	@PostMapping("/add")
 //	public String add(@ModelAttribute TodoItem requestItem) {
 //		TodoItem item = new TodoItem(requestItem.getCategory(),requestItem.getName());
