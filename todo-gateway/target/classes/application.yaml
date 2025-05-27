@@ -7,3 +7,26 @@ spring:
     nacos:
       discovery:
         server-addr: localhost:8848
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+      routes:
+        - id: UserService
+          uri: lb://UserService
+          predicates:
+            - Path=/user/**
+        - id: PageService
+          uri: lb://PageService
+          predicates:
+            - Path=/,/todolist
+        - id: TodoService
+          uri: lb://ListService
+          predicates:
+            - Path=/todo/**
+logging:
+  level:
+    org.springframework.cloud.gateway: trace
+    org.springframework.cloud.loadbalancer: INFO
+    com.alibaba.nacos: INFO

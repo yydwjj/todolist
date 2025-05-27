@@ -21,3 +21,7 @@ spring:
     nacos:
       discovery:
         server-addr: localhost:8848
+jwt:
+  token:
+    token-sign-key: yydwjj
+    token-expiration: 120

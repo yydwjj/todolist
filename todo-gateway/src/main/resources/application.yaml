@@ -13,10 +13,18 @@ spring:
           enabled: true
           lower-case-service-id: true
       routes:
+        - id: UserService
+          uri: lb://UserService
+          predicates:
+            - Path=/user/**
         - id: PageService
           uri: lb://PageService
           predicates:
-            - Path=/app/**
+            - Path=/,/todolist
+        - id: TodoService
+          uri: lb://ListService
+          predicates:
+            - Path=/todo/**
 logging:
   level:
     org.springframework.cloud.gateway: trace

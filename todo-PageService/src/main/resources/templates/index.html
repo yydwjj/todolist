@@ -274,7 +274,7 @@
     showLoading();
 
     try {
-      const response = await axios.post('user/sign', {
+      const response = await axios.post('/user/sign', {
         username: username,
         password: password
       });
@@ -283,7 +283,7 @@
       hideError('register');
 
       // 自动登录并保存 Token
-      const loginResponse = await axios.post('user/login', {
+      const loginResponse = await axios.post('/user/login', {
         username: username,
         password: password
       });
