@@ -3,6 +3,8 @@ package com.yydwjj.controller;
 import com.yydwjj.DTO.UserSummary;
 import com.yydwjj.pojo.User;
 import com.yydwjj.repository.UserRepository;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -10,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
 @RestController
 @RequestMapping("admin")
 public class AdminController {
@@ -18,11 +19,16 @@ public class AdminController {
     @Autowired
     private UserRepository userRepository;
 
+    // 添加日志记录器
+    private static final Logger logger = LoggerFactory.getLogger(AdminController.class);
+
     /**
      * 获取所有 role 为 "user" 的用户（仅返回 id 和 name）
      */
     @GetMapping("/users")
     public List<UserSummary> getAllUsers() {
+        logger.info("Get all users request received");
+
         List<User> users = userRepository.findByRole("user");
         return users.stream()
                 .map(user -> new UserSummary(user.getId(), user.getName()))
@@ -34,6 +40,8 @@ public class AdminController {
      */
     @PostMapping("/users")
     public ResponseEntity<String> addUser(@RequestBody User user) {
+        logger.info("Add user request received");
+
         if (userRepository.existsByName(user.getName())) {
             return ResponseEntity.badRequest().body("用户名已存在");
         }
@@ -47,6 +55,8 @@ public class AdminController {
      */
     @PutMapping("/users/{id}")
     public ResponseEntity<String> updateUser(@PathVariable Long id, @RequestBody User updatedUser) {
+        logger.info("Update user request received");
+
         Optional<User> optionalUser = userRepository.findById(id);
         if (optionalUser.isEmpty()) {
             return ResponseEntity.notFound().build();
@@ -66,6 +76,8 @@ public class AdminController {
      */
     @DeleteMapping("/users/{id}")
     public ResponseEntity<String> deleteUser(@PathVariable Long id) {
+        logger.info("Delete user request received");
+
         Optional<User> optionalUser = userRepository.findById(id);
         if (optionalUser.isEmpty()) {
             return ResponseEntity.notFound().build();

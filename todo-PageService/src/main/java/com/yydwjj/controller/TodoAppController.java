@@ -4,40 +4,30 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Controller
 //@RequestMapping("/app")
 public class TodoAppController {
 
-	@GetMapping("/")
-	public String index(Model model) {
-    	return "index";
-	}
-	@GetMapping("/todolist")
-	public String todolist() {
-		return "todolist";
-	}
+    private static final Logger logger = LoggerFactory.getLogger(TodoAppController.class);
 
-	@GetMapping("/manage")
-	public String manage() { return "manage";}
+    @GetMapping("/")
+    public String index(Model model) {
+        logger.info("Index page requested");
+        return "index";
+    }
 
-//	@PostMapping("/add")
-//	public String add(@ModelAttribute TodoItem requestItem) {
-//		TodoItem item = new TodoItem(requestItem.getCategory(),requestItem.getName());
-//		repository.save(item);
-//	  	return "redirect:/";
-//	}
-//
-//	@PostMapping("/update")
-//	public String update(@ModelAttribute TodoListViewModel requestItems) {
-//		for (TodoItem requestItem : requestItems.getTodoList() ) {
-//			TodoItem item = new TodoItem(requestItem.getCategory(), requestItem.getName());
-//			item.setComplete(requestItem.isComplete());
-//			item.setId(requestItem.getId());
-//			repository.save(item);
-//		}
-//		return "redirect:/";
-//	}
+    @GetMapping("/todolist")
+    public String todolist() {
+        logger.info("Todo list page requested");
+        return "todolist";
+    }
 
-  
+    @GetMapping("/manage")
+    public String manage() {
+        logger.info("Manage page requested");
+        return "manage";
+    }
 }

@@ -3,6 +3,8 @@ package com.yydwjj.controller;
 import com.yydwjj.pojo.*;
 import com.yydwjj.repository.TodoItemRepository;
 import com.yydwjj.utils.JwtHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
@@ -16,18 +18,19 @@ public class TodoRestController {
     @Autowired
     JwtHelper jwtHelper;
 
+    private static final Logger logger = LoggerFactory.getLogger(TodoRestController.class);
 
     @GetMapping("/all")
     public @ResponseBody Iterable<TodoItem> getAllByUser(@RequestHeader("Authorization") String authorizationHeader) {
+        logger.info("getAllByUser");
         // 1. 提取 Token
         String token = authorizationHeader.substring(7);
         Long uid = jwtHelper.getUserId(token);
         String role = jwtHelper.getUserRole(token);
         Iterable<TodoItem> todoList = null;
-        if(role.equals("admin")) {
-            todoList =  repository.findAll();
-        }
-        else {
+        if (role.equals("admin")) {
+            todoList = repository.findAll();
+        } else {
             todoList = repository.findByUser_Id(uid);
         }
         return todoList;
@@ -35,14 +38,13 @@ public class TodoRestController {
 
     @PostMapping("/add")
     public @ResponseBody Result addItemByUser(@RequestBody TodoItem request, @RequestHeader("Authorization") String authorizationHeader) {
-
+        logger.info("addItemByUser");
         String token = authorizationHeader.substring(7);
         Long uid = jwtHelper.getUserId(token);
         String role = jwtHelper.getUserRole(token);
-        if(role.equals("admin")) {
-            return new Result("管理员不可以添加代办事项",null);
-        }
-        else {
+        if (role.equals("admin")) {
+            return new Result("管理员不可以添加代办事项", null);
+        } else {
             // 1. 根据用户ID查找用户
 //            User user = userRepository.findById(uid)
 //                    .orElseThrow(() -> new RuntimeException("User not found"));
@@ -66,6 +68,7 @@ public class TodoRestController {
 
     @PostMapping("/update")
     public @ResponseBody Result updateItemByUser(@RequestBody TodoItem request, @RequestHeader("Authorization") String authorizationHeader) {
+        logger.info("updateItemByUser");
         String token = authorizationHeader.substring(7);
         Long uid = jwtHelper.getUserId(token);
         Long id = request.getId();
@@ -79,13 +82,12 @@ public class TodoRestController {
         String role = jwtHelper.getUserRole(token);
         TodoItem saved = null;
         //如果是管理员直接修改
-        if(role.equals("admin")) {
+        if (role.equals("admin")) {
             existingItem.setCategory(category);
             existingItem.setName(name);
             existingItem.setComplete(isComplete);
             repository.save(existingItem);
-        }
-        else {
+        } else {
             //否则进行两部判断
             // 2. 根据用户ID查找用户（确保用户存在）
 //            User user = userRepository.findById(uid)

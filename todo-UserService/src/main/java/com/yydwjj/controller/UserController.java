@@ -3,6 +3,8 @@ package com.yydwjj.controller;
 import com.yydwjj.pojo.User;
 import com.yydwjj.repository.UserRepository;
 import com.yydwjj.utils.JwtHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.http.HttpStatus;
@@ -22,11 +24,14 @@ public class UserController {
     @Autowired
     UserRepository userRepository;
 
+    private static final Logger logger = LoggerFactory.getLogger(UserController.class);
+
     /**
      * 用户登录
      */
     @PostMapping("login")
     public ResponseEntity<?> login(@RequestBody Map<String, String> body) {
+        logger.info("Login request received");
         String username = body.get("username");
         String password = body.get("password");
 
@@ -55,6 +60,7 @@ public class UserController {
      */
     @PostMapping("sign")
     public ResponseEntity<String> sign(@RequestBody Map<String, String> body) {
+        logger.info("Sign up request received");
         String username = body.get("username");
         String password = body.get("password");
         // 1. 检查用户名是否已存在
@@ -86,6 +92,7 @@ public class UserController {
     public ResponseEntity<Map<String, Object>> checkLoginStatus(
             @RequestHeader("Authorization") String authorizationHeader
     ) {
+        logger.info("Check login status request received");
         // 1. 提取 Token
         if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
             Map<String, Object> response = new HashMap<>();
@@ -127,6 +134,7 @@ public class UserController {
     public ResponseEntity<Map<String, Object>> checkRole(
             @RequestHeader("Authorization") String authorizationHeader
     ) {
+        logger.info("Check role request received");
         // 1. 提取 Token
         if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
             Map<String, Object> response = new HashMap<>();
