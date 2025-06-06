@@ -4,6 +4,7 @@ services:
 
   mysql:
     image: mysql:5.7
+    command: [ 'mysqld', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci', '--skip-character-set-client-handshake' ]
     container_name: mysql-server
     environment:
       MYSQL_ROOT_PASSWORD: 123456
@@ -17,10 +18,11 @@ services:
       - spring-todo-net
 
   nacos:
-    image: nacos/nacos-server:v1.4.7
+    image: nacos/nacos-server:v2.4.2
     container_name: nacos-server
     environment:
       MODE: standalone
+      NACOS_AUTH_ENABLE: false
     ports:
       - "8848:8848"
     networks:
@@ -43,7 +45,7 @@ services:
       - spring-todo-net
 
   user-service:
-    image: todo-userservice:1.2
+    image: todo-userservice:1.4
     container_name: todo-user-service
     ports:
       - "8082:8082"
@@ -59,7 +61,7 @@ services:
       - spring-todo-net
 
   page-service:
-    image: todo-pageservice:1.2
+    image: todo-pageservice:latest
     container_name: todo-page-service
     ports:
       - "8083:8083"
