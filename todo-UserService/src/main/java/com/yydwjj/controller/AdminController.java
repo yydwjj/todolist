@@ -29,7 +29,7 @@ public class AdminController {
     public List<UserSummary> getAllUsers() {
         logger.info("Get all users request received");
 
-        List<User> users = userRepository.findByRole("user");
+        List<User> users = userRepository.findByRoleAndIsDeletedFalse("user");
         return users.stream()
                 .map(user -> new UserSummary(user.getId(), user.getName()))
                 .collect(Collectors.toList());
