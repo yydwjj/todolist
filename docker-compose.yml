@@ -6,8 +6,8 @@ services:
     image: mysql:5.7
     container_name: mysql-server
     environment:
-      MYSQL_ROOT_PASSWORD: 123456   # <-- 你填这个
-      MYSQL_DATABASE: tododb             # <-- 你填这个
+      MYSQL_ROOT_PASSWORD: 123456
+      MYSQL_DATABASE: tododb
     ports:
       - "33066:3306"
     volumes:
@@ -27,7 +27,7 @@ services:
       - spring-todo-net
 
   gateway:
-    image: todo-gateway:latest            # <-- 如果你 build 时用了别的名字，请改
+    image: todo-gateway:1.2
     container_name: todo-gateway
     ports:
       - "8080:8080"
@@ -43,7 +43,7 @@ services:
       - spring-todo-net
 
   user-service:
-    image: todo-userservice:latest        # <-- 改成你 build 的名字
+    image: todo-userservice:1.2
     container_name: todo-user-service
     ports:
       - "8082:8082"
@@ -59,7 +59,7 @@ services:
       - spring-todo-net
 
   page-service:
-    image: todo-pageservice:latest        # <-- 改成你 build 的名字
+    image: todo-pageservice:1.2
     container_name: todo-page-service
     ports:
       - "8083:8083"
@@ -75,7 +75,7 @@ services:
       - spring-todo-net
 
   list-service:
-    image: todo-listservice:latest        # <-- 改成你 build 的名字
+    image: todo-listservice:1.2
     container_name: todo-list-service
     ports:
       - "8084:8084"
