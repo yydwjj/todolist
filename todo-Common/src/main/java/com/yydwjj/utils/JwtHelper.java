@@ -50,8 +50,6 @@ public class JwtHelper {
         return (String) claims.get("role");
     }
 
-
-
     //判断token是否有效
     public  boolean isExpiration(String token){
         try {

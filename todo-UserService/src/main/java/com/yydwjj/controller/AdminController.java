@@ -72,7 +72,7 @@ public class AdminController {
     }
 
     /**
-     * 删除用户（软删除或物理删除）
+     * 删除用户软删除
      */
     @DeleteMapping("/users/{id}")
     public ResponseEntity<String> deleteUser(@PathVariable Long id) {
