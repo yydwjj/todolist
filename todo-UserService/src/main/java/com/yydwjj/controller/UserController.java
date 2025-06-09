@@ -15,6 +15,10 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * 用户操作
+ * 基本的用户操作：登录、注册、状态认证、权限认证
+ */
 @RestController
 @RequestMapping("user")
 public class UserController {
@@ -28,6 +32,8 @@ public class UserController {
 
     /**
      * 用户登录
+     * @param body username,password两个key,对应登录账户和登录密码
+     * @return 登陆成功返回jwtToken，登录失败返回错误码+错误提示
      */
     @PostMapping("login")
     public ResponseEntity<?> login(@RequestBody Map<String, String> body) {
@@ -57,6 +63,8 @@ public class UserController {
 
     /**
      * 用户注册
+     * @param body username,password两个key,对应登录账户和登录密码
+     * @return 注册成功返回JwtToken+成功提示，注册失败返回错误码400+错误原因
      */
     @PostMapping("sign")
     public ResponseEntity<String> sign(@RequestBody Map<String, String> body) {
@@ -85,8 +93,10 @@ public class UserController {
     }
 
     /**
+     * 登陆状态检查
      * 用户登录状态的api
      * 登录成功返回 用户id
+     * @return 成功返回用户id，失败返回错误码+提示
      * */
     @GetMapping("/check-login")
     public ResponseEntity<Map<String, Object>> checkLoginStatus(
@@ -127,8 +137,10 @@ public class UserController {
         }
     }
     /**
-     * 用户登录状态的api
-     * 登录成功返回 用户id
+     * 用户身份检查
+     * 获取用户身份
+     * @return 有效JwtToken返回用户角色
+     * @return 无效返回错误码+错误提示
      * */
     @GetMapping("/check-role")
     public ResponseEntity<Map<String, Object>> checkRole(

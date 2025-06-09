@@ -12,6 +12,11 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+/**
+ * 用户管理
+ * 处理用户相关的操作，包括新建、更新用户信息、软删除用户
+ */
 @RestController
 @RequestMapping("admin")
 public class AdminController {
@@ -23,7 +28,10 @@ public class AdminController {
     private static final Logger logger = LoggerFactory.getLogger(AdminController.class);
 
     /**
-     * 获取所有 role 为 "user" 的用户（仅返回 id 和 name）
+     * 获取用户列表
+     * 获取所有 role 为 "user" 的用户、
+     * 脱敏处理仅返回 id 和 name
+     * @return 脱敏用户列表
      */
     @GetMapping("/users")
     public List<UserSummary> getAllUsers() {
@@ -37,6 +45,9 @@ public class AdminController {
 
     /**
      * 添加用户
+     * 只能添加用户而不能添加管理员
+     * @param user 用户名+用户密码
+     * @return 添加成功提示或添加失败提示
      */
     @PostMapping("/users")
     public ResponseEntity<String> addUser(@RequestBody User user) {
@@ -52,6 +63,10 @@ public class AdminController {
 
     /**
      * 更新用户信息
+     * 可以修改用户的用户名和密码
+     * @param id 所修改的用户id
+     * @param updatedUser 更新的用户信息
+     * @return 用户更新结果
      */
     @PutMapping("/users/{id}")
     public ResponseEntity<String> updateUser(@PathVariable Long id, @RequestBody User updatedUser) {
@@ -73,6 +88,9 @@ public class AdminController {
 
     /**
      * 删除用户软删除
+     * 在数据库中软删除用户，可以通过操作数据库的手段恢复
+     * @param id 要删除的用户的id
+     * @return 删除结果
      */
     @DeleteMapping("/users/{id}")
     public ResponseEntity<String> deleteUser(@PathVariable Long id) {

@@ -9,6 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * 待办事项管理
+ * 处理待办事项的相关操作，包括创建、修改、查询待办事项
+ */
 @RestController
 @RequestMapping(path = "/todo")
 public class TodoRestController {
@@ -20,6 +24,13 @@ public class TodoRestController {
 
     private static final Logger logger = LoggerFactory.getLogger(TodoRestController.class);
 
+    /**
+     * 查询全部待办事项
+     * 如果角色是用户，则查询此用户的相关待办事项。
+     * 如果角色是股那里元，则查询全部的待办事项
+     * @param authorizationHeader jwtToken
+     * @return 待办事项列表
+     */
     @GetMapping("/all")
     public @ResponseBody Iterable<TodoItem> getAllByUser(@RequestHeader("Authorization") String authorizationHeader) {
         logger.info("getAllByUser");
@@ -36,6 +47,12 @@ public class TodoRestController {
         return todoList;
     }
 
+    /**
+     * 添加待办事项
+     * @param request 待办事项详情，包括事项分类和事项藐视
+     * @param authorizationHeader jwtToken
+     * @return 成功返回添加的事项，失败返回null与失败提示
+     */
     @PostMapping("/add")
     public @ResponseBody Result addItemByUser(@RequestBody TodoItem request, @RequestHeader("Authorization") String authorizationHeader) {
         logger.info("addItemByUser");
@@ -66,6 +83,13 @@ public class TodoRestController {
         }
     }
 
+    /**
+     * 更新待办事项
+     * 可以更新待办事项的状态、标题、分类
+     * @param request 需要更新的事项
+     * @param authorizationHeader jwtToken
+     * @return 返回更新结果
+     */
     @PostMapping("/update")
     public @ResponseBody Result updateItemByUser(@RequestBody TodoItem request, @RequestHeader("Authorization") String authorizationHeader) {
         logger.info("updateItemByUser");
