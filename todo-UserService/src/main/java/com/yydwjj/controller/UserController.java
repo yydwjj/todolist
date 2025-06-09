@@ -81,6 +81,7 @@ public class UserController {
         user.setName(username);
         user.setPassword(password); // 注意：生产环境应加密密码！
         user.setRole("user");
+        user.setDeleted(false);
         User savedUser = userRepository.save(user);
 
         // 3. 生成 JWT Token

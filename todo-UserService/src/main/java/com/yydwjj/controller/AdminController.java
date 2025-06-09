@@ -3,13 +3,17 @@ package com.yydwjj.controller;
 import com.yydwjj.DTO.UserSummary;
 import com.yydwjj.pojo.User;
 import com.yydwjj.repository.UserRepository;
+import com.yydwjj.utils.JwtHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -26,6 +30,8 @@ public class AdminController {
 
     // 添加日志记录器
     private static final Logger logger = LoggerFactory.getLogger(AdminController.class);
+    @Autowired
+    private JwtHelper jwtHelper;
 
     /**
      * 获取用户列表
@@ -37,7 +43,7 @@ public class AdminController {
     public List<UserSummary> getAllUsers() {
         logger.info("Get all users request received");
 
-        List<User> users = userRepository.findByRoleAndIsDeletedFalse("user");
+        List<User> users = userRepository.findByRoleAndDeletedFalse("user");
         return users.stream()
                 .map(user -> new UserSummary(user.getId(), user.getName()))
                 .collect(Collectors.toList());
@@ -93,7 +99,7 @@ public class AdminController {
      * @return 删除结果
      */
     @DeleteMapping("/users/{id}")
-    public ResponseEntity<String> deleteUser(@PathVariable Long id) {
+    public ResponseEntity<String> deleteUser(@PathVariable Long id,@RequestHeader("Authorization") String authorizationHeader) {
         logger.info("Delete user request received");
 
         Optional<User> optionalUser = userRepository.findById(id);
@@ -101,13 +107,20 @@ public class AdminController {
             return ResponseEntity.notFound().build();
         }
 
+        if (authorizationHeader == null || !authorizationHeader.startsWith("Bearer ")) {
+            Map<String, Object> response = new HashMap<>();
+            response.put("error", "Invalid token format");
+        }
+
+        String token = authorizationHeader.substring(7); // 去掉 "Bearer " 前缀
+
+        Long deleteId = jwtHelper.getUserId(token);
         // 软删除方案：添加 isDeleted 字段
         User user = optionalUser.get();
         user.setDeleted(true); // 假设 User 类中新增了 isDeleted 字段
+        user.setDeleterId(deleteId);
         userRepository.save(user);
 
-        // 物理删除方案（直接删除）：
-        // userRepository.deleteById(id);
 
         return ResponseEntity.ok("用户删除成功");
     }

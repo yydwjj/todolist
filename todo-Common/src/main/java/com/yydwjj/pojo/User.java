@@ -17,7 +17,9 @@ public class User {
     private String name;
     private String password;
     private String role;
-    private boolean isDeleted;
+    @Column(name = "is_deleted", nullable = false)
+    private boolean deleted;
+    private Long deleterId;
     @JsonManagedReference // 标记为主方向，避免反向序列化
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TodoItem> todoItems;
@@ -29,6 +31,8 @@ public class User {
                 ", name='" + name + '\'' +
                 ", password='" + password + '\'' +
                 ", role='" + role + '\'' +
+                ", deleted=" + deleted +
+                ", deleterId=" + deleterId +
                 '}';
     }
 }
