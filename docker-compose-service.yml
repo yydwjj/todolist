@@ -29,7 +29,7 @@ services:
       - spring-todo-net
 
   gateway:
-    image: todo-gateway:1.2
+    image: todo-gateway:1.3
     container_name: todo-gateway
     ports:
       - "8080:8080"
@@ -45,7 +45,7 @@ services:
       - spring-todo-net
 
   user-service:
-    image: todo-userservice:1.4
+    image: todo-userservice:1.6
     container_name: todo-user-service
     ports:
       - "8082:8082"
@@ -61,7 +61,7 @@ services:
       - spring-todo-net
 
   page-service:
-    image: todo-pageservice:latest
+    image: todo-pageservice:1.5
     container_name: todo-page-service
     ports:
       - "8083:8083"
@@ -77,7 +77,7 @@ services:
       - spring-todo-net
 
   list-service:
-    image: todo-listservice:1.2
+    image: todo-listservice:1.4
     container_name: todo-list-service
     ports:
       - "8084:8084"
