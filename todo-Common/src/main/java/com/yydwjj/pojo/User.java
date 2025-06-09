@@ -1,5 +1,6 @@
 package com.yydwjj.pojo;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import lombok.Data;
@@ -20,7 +21,7 @@ public class User {
     @Column(name = "is_deleted", nullable = false)
     private boolean deleted;
     private Long deleterId;
-    @JsonManagedReference // 标记为主方向，避免反向序列化
+    @JsonBackReference // 标记为反向引用，禁止序列化
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TodoItem> todoItems;
 
