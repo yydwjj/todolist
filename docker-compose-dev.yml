@@ -1,0 +1,118 @@
+version: '3.8'
+
+services:
+
+  mysql:
+    image: mysql:5.7
+    command: [ 'mysqld', '--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci', '--skip-character-set-client-handshake' ]
+    container_name: mysql-server
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+      MYSQL_DATABASE: tododb
+    ports:
+      - "33066:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./init:/docker-entrypoint-initdb.d
+    networks:
+      - spring-todo-net
+
+  nacos:
+    image: nacos/nacos-server:v2.4.2
+    container_name: nacos-server
+    environment:
+      MODE: standalone
+      NACOS_AUTH_ENABLE: false
+    ports:
+      - "8848:8848"
+    networks:
+      - spring-todo-net
+
+  gateway:
+    build:
+      context: ./todo-gateway
+      dockerfile: Dockerfile
+    image: todo-gateway:1.3
+    container_name: todo-gateway
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-server:3306/tododb?useSSL=false&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: 123456
+      SPRING_CLOUD_NACOS_DISCOVERY_SERVER_ADDR: nacos-server:8848
+    depends_on:
+      - mysql
+      - nacos
+    networks:
+      - spring-todo-net
+
+  user-service:
+    build:
+      context: ./todo-UserService
+      dockerfile: Dockerfile
+    image: todo-userservice:1.5
+    container_name: todo-user-service
+    ports:
+      - "8082:8082"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-server:3306/tododb?useSSL=false&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: 123456
+      SPRING_CLOUD_NACOS_DISCOVERY_SERVER_ADDR: nacos-server:8848
+    depends_on:
+      - mysql
+      - nacos
+      - gateway
+    networks:
+      - spring-todo-net
+
+  page-service:
+    build:
+      context: todo-PageService
+      dockerfile: Dockerfile
+    image: todo-pageservice:1.4
+    container_name: todo-page-service
+    ports:
+      - "8083:8083"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-server:3306/tododb?useSSL=false&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: 123456
+      SPRING_CLOUD_NACOS_DISCOVERY_SERVER_ADDR: nacos-server:8848
+    depends_on:
+      - mysql
+      - nacos
+      - gateway
+      - user-service
+    networks:
+      - spring-todo-net
+
+  list-service:
+    build:
+      context: todo-ListService
+      dockerfile: Dockerfile
+    image: todo-listservice:1.3
+    container_name: todo-list-service
+    ports:
+      - "8084:8084"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql-server:3306/tododb?useSSL=false&serverTimezone=UTC
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: 123456
+      SPRING_CLOUD_NACOS_DISCOVERY_SERVER_ADDR: nacos-server:8848
+    depends_on:
+      - mysql
+      - nacos
+      - gateway
+      - user-service
+      - page-service
+    networks:
+      - spring-todo-net
+
+volumes:
+  mysql_data:
+
+networks:
+  spring-todo-net:
+    driver: bridge
