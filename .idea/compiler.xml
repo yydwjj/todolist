@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CompilerConfiguration">
+    <annotationProcessing>
+      <profile default="true" name="Default" enabled="true" />
+      <profile name="Maven default annotation processors profile" enabled="true">
+        <sourceOutputDir name="target/generated-sources/annotations" />
+        <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
+        <outputRelativeToContentRoot value="true" />
+        <module name="todo-PageService" />
+        <module name="todo-Common" />
+        <module name="todo-UserService" />
+        <module name="todo-gateway" />
+        <module name="todo-ListService" />
+      </profile>
+    </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="gateway" target="17" />
+    </bytecodeTargetLevel>
+  </component>
+  <component name="JavacSettings">
+    <option name="ADDITIONAL_OPTIONS_OVERRIDE">
+      <module name="gateway" options="-parameters" />
+      <module name="todo-Common" options="-parameters" />
+      <module name="todo-ListService" options="-parameters" />
+      <module name="todo-PageService" options="-parameters" />
+      <module name="todo-UserService" options="-parameters" />
+      <module name="todo-gateway" options="-parameters" />
+    </option>
+  </component>
+</project>

@@ -20,7 +20,7 @@ public class TodoItem {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
-    @JsonManagedReference // 标记为主方向，允许序列化
+//    @JsonManagedReference // 标记为主方向，允许序列化
     private User user;
 
     public TodoItem() {}

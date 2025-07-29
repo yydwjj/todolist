@@ -27,6 +27,6 @@ spring:
             - Path=/todo/**
 logging:
   level:
-    org.springframework.cloud.gateway: trace
+    org.springframework.cloud.gateway: INFO
     org.springframework.cloud.loadbalancer: INFO
     com.alibaba.nacos: INFO

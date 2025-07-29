@@ -1,0 +1,13 @@
+----------------------------------------------------------------
+Mon Jun 16 14:07:30 CST 2025:
+Booting Derby version The Apache Software Foundation - Apache Derby - 10.14.2.0 - (1828579): instance a816c00e-0197-7759-9a0f-00001c33fb78 
+on database directory C:\Users\28273\Desktop\作业\分布式系统架构\big\spring-todo-list-micro\nacos-server-1.4.7\nacos\data\derby-data with class loader org.springframework.boot.loader.LaunchedURLClassLoader@3581c5f3 
+Loaded from jar:file:/C:/Users/28273/Desktop/作业/分布式系统架构/big/spring-todo-list-micro/nacos-server-1.4.7/nacos/target/nacos-server.jar!/BOOT-INF/lib/derby-10.14.2.0.jar!/
+java.vendor=Azul Systems, Inc.
+java.runtime.version=17.0.12+7-LTS
+user.dir=C:\Users\28273\Desktop\作业\分布式系统架构\big\spring-todo-list-micro
+os.name=Windows 11
+os.arch=amd64
+os.version=10.0
+derby.system.home=null
+Database Class Loader started - derby.database.classpath=''

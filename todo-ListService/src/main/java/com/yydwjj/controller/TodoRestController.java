@@ -27,7 +27,7 @@ public class TodoRestController {
     /**
      * 查询全部待办事项
      * 如果角色是用户，则查询此用户的相关待办事项。
-     * 如果角色是股那里元，则查询全部的待办事项
+     * 如果角色是管理员，则查询全部的待办事项
      * @param authorizationHeader jwtToken
      * @return 待办事项列表
      */
